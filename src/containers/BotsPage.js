@@ -10,7 +10,9 @@ class BotsPage extends React.Component {
     super()
     this.state = {
       robotList: [],
-      myRobots: []
+      myRobots: [],
+      currentBot: null,
+      isLookingAtSingleBot: false
     }
   }
 
@@ -43,9 +45,39 @@ removeRobot = (bot) => {
 }
 
 renderBotCard = (bot) => {
-    return(
-      <BotSpecs bot={bot}/>
-    )
+  return <BotSpecs bot={bot} />
+}
+
+selectBot = (bot) => {
+  this.setState({
+    currentBot: bot,
+    isLookingAtSingleBot: true
+  })
+}
+
+showArmy = () => {
+  this.setState({
+    currentBot: null,
+    isLookingAtSingleBot: false
+  })
+}
+
+renderBottomHalf = () => {
+    if(this.state.isLookingAtSingleBot === true){
+      return <BotSpecs
+        bot={this.state.currentBot}
+        addRobot={this.addRobot}
+        showArmy={this.showArmy}
+      />
+    } else {
+      return <BotCollection
+        robotList={this.state.robotList}
+        selectBot={this.selectBot}
+        addRobot={this.addRobot}
+        showArmy={this.showArmy}
+        renderBotCard={this.renderBotCard}
+      />
+    }
 }
 
   render() {
@@ -55,15 +87,11 @@ const {robotList, myRobots} = this.state
     return (
       <div>
         {/* put your components here */}
-        <BotCollection
-          robotList={robotList}
-          addRobot={this.addRobot}
-          renderBotCard={this.renderBotCard}
-          />
         <YourBotArmy
           myRobots={myRobots}
           removeRobot={this.removeRobot}
-          />
+        />
+        {this.renderBottomHalf()}
       </div>
     );
   }
